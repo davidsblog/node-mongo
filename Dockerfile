@@ -38,10 +38,12 @@ RUN n stable
 RUN apt-get -y install supervisor
 RUN mkdir -p /var/log/supervisor
 
-RUN mkdir /usr/local/start
-WORKDIR /usr/local/start
-
-COPY .. .
+RUN mkdir -p /usr/local/start
+WORKDIR /usr/local
+COPY package.json start/
+COPY supervisord.conf start/
+COPY server.js start/
+WORKDIR start
 
 RUN npm install --save express
 RUN npm install --save body-parser
