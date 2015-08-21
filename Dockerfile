@@ -37,3 +37,14 @@ RUN n stable
 
 RUN apt-get -y install supervisor
 RUN mkdir -p /var/log/supervisor
+
+RUN mkdir /usr/local/start
+WORKDIR /usr/local/start
+
+COPY .. .
+
+RUN npm install --save express
+RUN npm install --save body-parser
+
+EXPOSE 27017 8888
+CMD /usr/bin/supervisord -c supervisord.conf
