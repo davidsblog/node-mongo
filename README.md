@@ -1,2 +1,5 @@
 # node-mongo
-Docker container with node and mongo
+
+##Work in progress
+
+A docker container running node and mongo
