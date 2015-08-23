@@ -1,52 +1,38 @@
-FROM ubuntu:latest
+# See: http://phusion.github.io/baseimage-docker/
 
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
+# Use a specific version to be repeatable
+FROM phusion/baseimage:0.9.17
 
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		ca-certificates curl \
-		numactl \
-	&& rm -rf /var/lib/apt/lists/*
+# Use baseimage-docker's init system
+CMD ["/sbin/my_init"]
 
-# grab gosu for easy step-down from root
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu
+# Install Node.js and Express
+RUN apt-get -y update && \
+    apt-get -y install wget && \
+    apt-get -y install npm && \
+    npm install -g n && \
+    n stable && \
+    npm install express -g && \
+    npm install body-parser -g && \
+    mkdir /etc/service/nodestart
 
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 3AFEF01FE92B6927CC1EEC80F564179A36496327
+# Install MongoDB
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
+  echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
+  apt-get update && \
+  apt-get install -y mongodb-org && \
+  mkdir /etc/service/mongod
 
-ENV MONGO_VERSION 2.2.7
+# Add a script to run the Mongo daemon
+ADD mongod.sh /etc/service/mongod/run
 
-RUN curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz" -o mongo.tgz \
-	&& curl -SL "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGO_VERSION.tgz.sig" -o mongo.tgz.sig \
-	&& gpg --verify mongo.tgz.sig \
-	&& tar -xvf mongo.tgz -C /usr/local --strip-components=1 \
-	&& rm mongo.tgz*
+# Add a script to run the a Node app
+ADD nodestart.sh /etc/service/nodestart/run
 
-VOLUME /data/db
+# Define mountable directories for mongo and node
+VOLUME ["/data/db", "/node/start"]
 
-RUN apt-get -y update
-RUN apt-get -y install wget
-RUN apt-get -y install npm
-RUN npm install -g n
-RUN n stable
+EXPOSE 27017 28017
 
-RUN apt-get -y install supervisor
-RUN mkdir -p /var/log/supervisor
-
-RUN mkdir -p /usr/local/start
-WORKDIR /usr/local
-COPY package.json start/
-COPY supervisord.conf start/
-COPY server.js start/
-WORKDIR start
-
-RUN npm install --save express
-RUN npm install --save body-parser
-
-EXPOSE 27017 8888
-CMD /usr/bin/supervisord -c supervisord.conf
+# Clean up
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
