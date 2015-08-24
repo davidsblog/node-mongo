@@ -6,6 +6,12 @@ FROM phusion/baseimage:0.9.17
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
 
+# Add a script to run the Mongo daemon
+ADD mongod.sh /etc/service/mongod/run
+
+# Add a script to run the a Node app
+ADD nodestart.sh /etc/service/nodestart/run
+
 # Install Node.js and Express
 RUN apt-get -y update && \
     apt-get -y install wget && \
@@ -15,7 +21,8 @@ RUN apt-get -y update && \
     npm install express -g && \
     npm install body-parser -g && \
     mkdir -p /etc/service/nodestart && \
-    mkdir -p /vol/node/start
+    mkdir -p /vol/node/start && \
+    chmod +x /etc/service/nodestart/run
 
 ADD server.js package.json /vol/node/start/
 
@@ -25,13 +32,8 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
   apt-get update && \
   apt-get install -y mongodb-org && \
   mkdir -p /etc/service/mongod && \
-  mkdir -p /vol/data/db
-
-# Add a script to run the Mongo daemon
-ADD mongod.sh /etc/service/mongod/run
-
-# Add a script to run the a Node app
-ADD nodestart.sh /etc/service/nodestart/run
+  mkdir -p /vol/data/db && \
+  chmod +x /etc/service/mongod/run
 
 # Define mountable directories for mongo and node
 VOLUME ["/vol/data/db", "/vol/node/start"]
