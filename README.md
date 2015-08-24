@@ -13,3 +13,7 @@ Test the container:
 Run a node project **from the host** (in the current directory):
 
 ``docker run -d -v ${PWD}:/vol/node/start -p 8080:8888 node-mongo``
+
+Or ... use it to run a container-volume:
+
+https://github.com/davidsblog/nm-app-demo
