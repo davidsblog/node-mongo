@@ -6,6 +6,9 @@ FROM phusion/baseimage:0.9.17
 # Use baseimage-docker's init system
 CMD ["/sbin/my_init"]
 
+RUN mkdir -p /etc/service/nodestart && \
+    mkdir -p /etc/service/mongod
+
 # Add a script to run the Mongo daemon
 ADD mongod.sh /etc/service/mongod/run
 
@@ -20,7 +23,6 @@ RUN apt-get -y update && \
     n stable && \
     npm install express -g && \
     npm install body-parser -g && \
-    mkdir -p /etc/service/nodestart && \
     mkdir -p /vol/node/start && \
     chmod +x /etc/service/nodestart/run
 
@@ -31,7 +33,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
   echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
   apt-get update && \
   apt-get install -y mongodb-org && \
-  mkdir -p /etc/service/mongod && \
   mkdir -p /vol/data/db && \
   chmod +x /etc/service/mongod/run
 
