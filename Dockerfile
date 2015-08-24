@@ -14,14 +14,18 @@ RUN apt-get -y update && \
     n stable && \
     npm install express -g && \
     npm install body-parser -g && \
-    mkdir /etc/service/nodestart
+    mkdir -p /etc/service/nodestart && \
+    mkdir -p /vol/node/start
+
+ADD server.js package.json /vol/node/start/
 
 # Install MongoDB
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
   echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
   apt-get update && \
   apt-get install -y mongodb-org && \
-  mkdir /etc/service/mongod
+  mkdir -p /etc/service/mongod && \
+  mkdir -p /vol/data/db
 
 # Add a script to run the Mongo daemon
 ADD mongod.sh /etc/service/mongod/run
@@ -30,9 +34,9 @@ ADD mongod.sh /etc/service/mongod/run
 ADD nodestart.sh /etc/service/nodestart/run
 
 # Define mountable directories for mongo and node
-VOLUME ["/data/db", "/node/start"]
+VOLUME ["/vol/data/db", "/vol/node/start"]
 
-EXPOSE 27017 28017
+EXPOSE 27017 28017 8888
 
 # Clean up
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

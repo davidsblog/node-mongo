@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Quiet version
-#mongod > /dev/null 2>&1
+#mongod --dbpath /vol/data/db > /dev/null 2>&1
 
 # Noisey version
-mongod
+mongod --dbpath /vol/data/db
