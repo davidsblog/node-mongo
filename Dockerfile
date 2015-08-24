@@ -15,18 +15,20 @@ ADD mongod.sh /etc/service/mongod/run
 # Add a script to run the a Node app
 ADD nodestart.sh /etc/service/nodestart/run
 
-# Install Node.js and Express
+# Install Node.js
 RUN apt-get -y update && \
     apt-get -y install wget && \
     apt-get -y install npm && \
     npm install -g n && \
     n stable && \
-    npm install express -g && \
-    npm install body-parser -g && \
     mkdir -p /vol/node/start && \
     chmod +x /etc/service/nodestart/run
 
+# Set up a default app
 ADD server.js package.json /vol/node/start/
+WORKDIR /vol/node/start
+RUN npm install --save express && \
+    npm install --save body-parser
 
 # Install MongoDB
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \

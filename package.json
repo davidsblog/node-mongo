@@ -1,7 +1,3 @@
 {
-  "name": "start",
-  "dependencies": {
-    "body-parser": "^1.13.3",
-    "express": "^4.13.3"
-  }
+  "name": "start"
 }
