@@ -12,12 +12,12 @@ ADD mongod.sh /etc/service/mongod/run
 # Add a script to run the a Node app
 ADD nodestart.sh /etc/service/nodestart/run
 
-# Install Node.js
+# Install Node.js v 0.12.7
 RUN apt-get -y update && \
     apt-get -y install wget && \
     apt-get -y install npm && \
     npm install -g n && \
-    n stable && \
+    n 0.12.7 && \
     mkdir -p /vol/node/start
 
 # Set up a default app
