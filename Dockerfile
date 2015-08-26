@@ -24,11 +24,11 @@ RUN apt-get -y update && \
 ADD server.js package.json /vol/node/start/
 ADD node_modules /vol/node/start/node_modules
 
-# Install MongoDB
+# Install MongoDB v 3.0.6
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
   echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
   apt-get update && \
-  apt-get install -y mongodb-org && \
+  apt-get install -y mongodb-org mongodb-org=3.0.6 mongodb-org-server=3.0.6 mongodb-org-shell=3.0.6 mongodb-org-mongos=3.0.6 mongodb-org-tools=3.0.6 && \
   mkdir -p /vol/data/db
 
 # Define mountable directories for mongo and node
