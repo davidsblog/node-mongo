@@ -17,6 +17,7 @@ RUN apt-get -y update && \
     apt-get -y install wget && \
     apt-get -y install npm && \
     npm install -g n && \
+    npm install -g nodemon &&\
     n 0.12.7 && \
     mkdir -p /vol/node/start
 
