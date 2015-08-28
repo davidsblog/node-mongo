@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cd /vol/node/start; node server.js
+cd /vol/node/start; nodemon server.js
