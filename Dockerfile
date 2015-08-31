@@ -20,9 +20,11 @@ RUN apt-get -y update && \
     n 0.12.7 && \
     mkdir -p /vol/node/start
 
-# Set up a default app
-ADD server.js package.json /vol/node/start/
+# Set up the default app
+ADD server.js db.js package.json /vol/node/start/
 ADD node_modules /vol/node/start/node_modules
+ADD layouts /vol/node/start/layouts
+ADD model /vol/node/start/model
 
 # Install MongoDB v 2.6.11
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
