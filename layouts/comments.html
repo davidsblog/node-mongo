@@ -15,7 +15,7 @@
       </div>
   </nav>
   
-  <div ng-controller='CommentsController' class='container'>
+  <div ng-controller='CommentsControl' class='container'>
     <h2>Comments</h2>
     <form role='form'>
       <div class='form-group'>
@@ -43,7 +43,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <script>
     var app = angular.module('app', [])
-    app.controller('CommentsController', function ($scope, $http) {
+    app.controller('CommentsControl', function ($scope, $http) {
   
       $http.get('/api/comments').success(function (comments) {
           $scope.comments = comments
