@@ -10,8 +10,7 @@ app.use(bodyParser.json())
 bootstrap()
 app.listen(8888)
 
-app.get('/', function(req, res)
-{
+app.get('/', function(req, res) {
     res.sendFile('layouts/comments.html', { root : __dirname})
 })
 
@@ -23,8 +22,7 @@ app.post('/api/comments', function (req, res, next) {
   })
 })
 
-app.get('/api/comments', function (req, res, next)
-{
+app.get('/api/comments', function (req, res, next) {
     Comment.find().sort('-date').exec(function(err, comments)
     {
         if (err) { return next(err) }
@@ -32,8 +30,7 @@ app.get('/api/comments', function (req, res, next)
     })
 })
 
-function bootstrap()
-{
+function bootstrap() {
     Comment.find().limit(1).exec(function(err, firstComment) {
         if (firstComment.length < 1) {
             new Comment({ body: 'Hello, world!' }).save();    
